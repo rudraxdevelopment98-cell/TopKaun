@@ -20,3 +20,4 @@ export const getIndiaRank = impl.getIndiaRank;
 export const applyPromotion = impl.applyPromotion;
 export const addHype = impl.addHype;
 export const addWatcher = impl.addWatcher;
+export const getWatchersForBoard = impl.getWatchersForBoard;

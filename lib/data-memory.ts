@@ -155,6 +155,10 @@ export async function addWatcher(email: string, board: string): Promise<void> {
   store().watchers.push({ email, board, at: new Date().toISOString() });
 }
 
+export async function getWatchersForBoard(board: string): Promise<Watcher[]> {
+  return store().watchers.filter((w) => w.board === board);
+}
+
 // ── helpers ─────────────────────────────────────────────────────────────
 
 function ensureUniqueSlug(base: string, s: Store): string {

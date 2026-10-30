@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { applyPromotion } from "@/lib/data";
+import { applyPromotion, getWatchersForBoard } from "@/lib/data";
 import { verifyCheckoutSignature } from "@/lib/payments";
+import { sendOutrankedAlert } from "@/lib/email";
+import { SITE_URL } from "@/lib/env";
 import { MIN_INR } from "@/lib/money";
 import { CITIES, CATEGORIES } from "@/lib/types";
 
@@ -40,6 +42,27 @@ export async function POST(req: Request) {
     category: d.category,
     amountInr: d.amountInr,
   });
+
+  // If this payment changed who holds India #1, email everyone watching it.
+  // Best-effort: never let an email problem fail a confirmed payment.
+  if (result.indiaRank === 1 && result.tookTopFrom) {
+    try {
+      const watchers = await getWatchersForBoard("India #1");
+      await Promise.allSettled(
+        watchers.map((w) =>
+          sendOutrankedAlert(w.email, {
+            board: "India",
+            newLeader: result.listing.name,
+            previousLeader: result.tookTopFrom as string,
+            amountInr: result.listing.totalInr,
+            siteUrl: SITE_URL,
+          }),
+        ),
+      );
+    } catch {
+      // swallow — the payment already succeeded
+    }
+  }
 
   return NextResponse.json({
     ok: true,

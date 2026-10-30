@@ -16,3 +16,12 @@ export const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?
 
 /** True when Supabase is configured on the server → use the real database. */
 export const DB_LIVE = Boolean(SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY);
+
+// ── Email: Resend (https://resend.com) ─────────────────────────────────
+export const RESEND_API_KEY = process.env.RESEND_API_KEY ?? "";
+export const EMAIL_FROM = process.env.EMAIL_FROM ?? "TopKaun <alerts@topkaun.in>";
+/** Public base URL for links in emails. */
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://topkaun.in";
+
+/** True when an email provider is configured → send real emails. */
+export const EMAIL_LIVE = Boolean(RESEND_API_KEY);

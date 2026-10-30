@@ -1,6 +1,6 @@
 import "server-only";
 import type { Listing, BoardFilter, CityTotal } from "./types";
-import type { Move, PromoteInput, PromoteResult } from "./data-types";
+import type { Move, Watcher, PromoteInput, PromoteResult } from "./data-types";
 import { supabase } from "./supabase";
 import { rankListings, cityWarTotals } from "./board";
 import { slugify, monogram, MIN_INR } from "./money";
@@ -154,6 +154,16 @@ export async function addHype(slug: string): Promise<Listing | null> {
 export async function addWatcher(email: string, board: string): Promise<void> {
   const { error } = await supabase().from("watchers").insert({ email, board });
   if (error) throw error;
+}
+
+export async function getWatchersForBoard(board: string): Promise<Watcher[]> {
+  const { data, error } = await supabase().from("watchers").select("email,board,at").eq("board", board);
+  if (error) throw error;
+  return (data as { email: string; board: string; at: string }[]).map((w) => ({
+    email: w.email,
+    board: w.board,
+    at: w.at,
+  }));
 }
 
 // ── helpers ─────────────────────────────────────────────────────────────
