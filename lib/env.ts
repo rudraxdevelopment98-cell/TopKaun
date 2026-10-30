@@ -10,6 +10,9 @@ export const PAYMENTS_LIVE = Boolean(RAZORPAY_KEY_ID && RAZORPAY_KEY_SECRET);
 
 export const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 export const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
+// Server-only. Used for all data reads/writes through the data layer. Never
+// exposed to the client (only imported by server-side modules).
+export const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
 
-/** True when Supabase is configured → use the real database. */
-export const DB_LIVE = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
+/** True when Supabase is configured on the server → use the real database. */
+export const DB_LIVE = Boolean(SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY);

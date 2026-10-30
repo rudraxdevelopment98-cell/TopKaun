@@ -60,12 +60,21 @@ was built, and `docs/GO-TO-MARKET.md`.
 - `lib/board.ts` — **pure** ranking helpers (`rankListings`, `cityWarTotals`,
   `rowAmount`), shared by server and the client board so they rank identically.
 - `lib/seed.ts` — sample listings carried from the original prototype.
-- `lib/data.ts` — **the data layer**. Today an in-memory store (seeded, kept on
-  `globalThis` to survive dev hot-reload). Async API: `getAllListings`,
+- `lib/data.ts` — **the data layer router**. Routes every call to the Supabase
+  store when `DB_LIVE`, else the in-memory demo store. Async API: `getAllListings`,
   `getBoard`, `getListingBySlug`, `getCityWar`, `getRecentMoves`, `getIndiaRank`,
   `applyPromotion` (call ONLY after payment verified), `addHype`, `addWatcher`.
-  **This one file is the drop-in point for Supabase.**
-- `lib/env.ts` — detects keys: `PAYMENTS_LIVE`, `DB_LIVE`.
+  - `lib/data-memory.ts` — in-memory demo store (seeded, on `globalThis`).
+  - `lib/data-supabase.ts` — Postgres store (same API). Reads reuse the pure
+    ranking helpers; writes are atomic via SQL functions.
+  - `lib/data-types.ts` — shared shapes for both stores.
+  - `lib/supabase.ts` — server-only client (service-role key).
+  - `supabase/schema.sql` — tables + atomic functions + RLS. Run once in Supabase.
+- `app/api/badge/[slug]` — live SVG rank badge a business embeds on its own site.
+- `app/opengraph-image.tsx` + `app/l/[slug]/opengraph-image.tsx` — dynamic social
+  share cards (use "Rs", not ₹, because the image font lacks the ₹ glyph).
+- `lib/env.ts` — detects keys: `PAYMENTS_LIVE`, `DB_LIVE` (needs URL +
+  `SUPABASE_SERVICE_ROLE_KEY`).
 - `lib/payments.ts` — `createPromotionOrder` (mock when no keys, else Razorpay
   order), `verifyCheckoutSignature`.
 - API routes in `app/api/`: `promote/order`, `promote/confirm`, `hype`, `watch`,
@@ -91,14 +100,19 @@ pnpm build      # production build + typecheck + lint (keep this clean)
 
 **Done:** full working MVP on sample data — board + filters + live scoreboard,
 promote→pay→ranked loop (mock payments), listing pages, City War, hype, watch,
-all legal pages. Production build is clean. Razorpay wiring is present and
-activates when keys are added.
+all legal pages, dynamic social **share cards** + an embeddable live **rank
+badge**. The **Supabase data layer is written and wired** (activates on keys +
+schema), and **Razorpay** activates on keys. Production build is clean.
 
 **Next milestones (in order):** see `DEPLOY.md` and `docs/GO-TO-MARKET.md`.
-1. Supabase: create project, add schema, swap `lib/data.ts` to Postgres.
-2. Razorpay live keys + webhook; transactional email for invoices + alerts.
-3. Deploy to Vercel on domain `topkaun.in`.
-4. Legal opinion + entity/GST + the Ahmedabad seeding playbook.
+1. Deploy to Vercel (needs the founder's Vercel account — then free & instant).
+2. Supabase: create project, run `supabase/schema.sql`, add URL +
+   `SUPABASE_SERVICE_ROLE_KEY`. The code switches to Postgres automatically.
+   NOTE: the Supabase store is written but UNTESTED against a real DB — test the
+   promote/hype/watch loop once keys exist.
+3. Razorpay live keys + webhook; transactional email for invoices + "outranked"
+   alerts (provider not chosen yet).
+4. Domain `topkaun.in`. Legal opinion + entity/GST + the Ahmedabad seeding playbook.
 
 ## Working rules for this repo
 
