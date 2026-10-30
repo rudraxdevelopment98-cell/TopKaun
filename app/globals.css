@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+/* ── TopKaun design system (from the original prototype) ───────────── */
+@theme {
+  --color-cream: #f1f3ee;
+  --color-panel: #ffffff;
+  --color-ink: #13201a;
+  --color-forest: #0e3a2b;
+  --color-forest-2: #154b39;
+  --color-forest-3: #1b5340;
+  --color-forest-line: #1f5944;
+  --color-gold: #ffae1a;
+  --color-gold-2: #ffc65c;
+  --color-gold-ink: #9a5b00;
+  --color-sage: #c9d6ce;
+  --color-sage-2: #a9bdb2;
+  --color-muted: #56645c;
+  --color-line: #d5dbd3;
+  --color-line-2: #c2cca4;
+  --color-whatsapp: #1e7d4f;
+
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-hind), ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* ── Motion (respects reduced-motion) ──────────────────────────────── */
+@keyframes flipA {
+  0% { transform: perspective(400px) rotateX(0); }
+  45% { transform: perspective(400px) rotateX(-88deg); }
+  55% { transform: perspective(400px) rotateX(88deg); }
+  100% { transform: perspective(400px) rotateX(0); }
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+@keyframes crown {
+  0% { transform: translateY(-14px) scale(0.6); opacity: 0; }
+  60% { transform: translateY(2px) scale(1.06); opacity: 1; }
+  100% { transform: none; }
+}
+.anim-flip { animation: flipA 0.55s ease-in-out both; }
+.anim-rise { animation: rise 0.45s ease-out; }
+.anim-live { animation: pulse 1.6s ease-in-out infinite; }
+.anim-crown { animation: crown 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-flip, .anim-rise, .anim-live, .anim-crown { animation: none; }
+  html { scroll-behavior: auto; }
+}
