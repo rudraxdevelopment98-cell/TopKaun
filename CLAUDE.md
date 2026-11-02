@@ -96,6 +96,18 @@ pnpm dev        # http://localhost:3000 — demo mode, no keys needed
 pnpm build      # production build + typecheck + lint (keep this clean)
 ```
 
+## Live deployment
+
+- **Live URL: https://topkaun.vercel.app** (public, demo mode).
+- Vercel team `team_vowKgYpH8bU9NTS3iJLqu6Pv`, project `topkaun`
+  (`prj_YnhEjqmTJzf0kCdKcFkcQKF8Vt4d`), deployed from branch
+  `claude/amazing-ramanujan-4m0jo3`, target production. SSO/login wall is OFF.
+- Redeploy after a push with the Vercel MCP `create_deployment` (gitSource →
+  this repo + branch), or set up auto-deploy by making this the production branch.
+- Add live env vars (Supabase/Razorpay/Resend) in Vercel → Project → Settings →
+  Environment Variables, then redeploy. NOTE: Next.js must stay on a Vercel-
+  allowed version (we're on 15.5.28; 15.5.4 was blocked for CVE-2025-66478).
+
 ## Status
 
 **Done:** full working MVP on sample data — board + filters + live scoreboard,
